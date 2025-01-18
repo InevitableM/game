@@ -1,0 +1,86 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #edf8e3;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-board {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    height: 200px;
+    background-color: #000;
+    margin: 20px 0;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.board-row {
+    display: flex;
+}
+
+.board-cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #333;
+    box-sizing: border-box;
+    transition: background-color 0.1s, transform 0.1s;
+}
+
+.snake {
+    background-color: #0f0;
+}
+
+.snake-head {
+    background-color: #0f0;
+    border-radius: 50%;
+}
+
+.snake-tail {
+    background-color: #0f0;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.apple {
+    background-color: #f00;
+    border-radius: 50%;
+    position: relative;
+}
+
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.restart-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.restart-button:hover {
+    background-color: #0056b3;
+}
