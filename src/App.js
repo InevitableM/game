@@ -20,7 +20,7 @@ function Home() {
 function App() {
   return (
     <div className="App">
-      <h1>Ek Aur Gamer</h1>
+      <h1>Ek Aur GaYmer</h1>
     <Router>
     <Routes>  <Route path="/" element={<Home />} />
     <Route path="/snake" element={<SnakeGame />} />
