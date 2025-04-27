@@ -30,8 +30,7 @@ function Home() {
 
 function App() {
   return (
-    <div className="App">
-      <h1>Ek Aur GaYmer</h1>
+<div className="App">
     <Router>
     <Header />
     <Routes>  <Route path="/" element={<Home />} />

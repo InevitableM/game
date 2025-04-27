@@ -73,7 +73,7 @@ export default function Wordle(){
 
  return (
     <div>
-      <h1>Gaymer</h1> 
+      <h1>Wordle</h1> 
     {guess.map((guesss,i)=>{
       const iscurr=i===guess.findIndex((g)=>g==='')?true:false;
       const status=isenter[i];
