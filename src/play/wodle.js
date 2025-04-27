@@ -28,7 +28,7 @@ export default function Wordle(){
             }
           }
   
-          if(curr===randomword){
+          if(curr===randomword){            
             alert('You guessed the word!');
             setguess(prev=>{
               const newguess=[...prev];
@@ -56,9 +56,13 @@ export default function Wordle(){
               newisenter[prev.indexOf(false)]=true;
               return newisenter;
             }
-            )
-            setcurr('');
-          }
+          )
+            if (guess[4]!=='') {
+            alert('All guesses are used! The correct word was: ' + randomword);
+            }
+          setcurr('');
+        }
+          
           else{
             alert('Not a valid word!');
           }
@@ -77,8 +81,6 @@ export default function Wordle(){
     {guess.map((guesss,i)=>{
       const iscurr=i===guess.findIndex((g)=>g==='')?true:false;
       const status=isenter[i];
-      console.log(i);
-      console.log(status);
      return (
     <div key={i}><Tiles word={iscurr ? curr :guesss ?? ""
 
