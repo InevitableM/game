@@ -21,10 +21,17 @@ export default function Wordle(){
         }
         else if(e.key==='Enter'){
           let temp=false;
-          for(let i=0;i<val.length;i++){
-            if(curr===val[i]){
-              temp=true;
-              break;
+          let l=0,r=val.length-1;
+          while(l<=r){
+            const mid=Math.floor((l+r)/2);
+            if(curr===val[mid]){
+              temp=true;break;
+            }
+            else if(curr<val[mid]){
+              r=mid-1;
+            }
+            else{
+              l=mid+1;
             }
           }
   
@@ -88,7 +95,6 @@ export default function Wordle(){
             )
         })
     }
-    <>  </>
     </div>
      ); 
 }
@@ -102,7 +108,7 @@ function Tiles({word,ans,enter}){
     }
     if(enter){for(let i=0;i<5;i++){
        if(word[i]===ans[i])
-        {entry[i]=<div className="tile1" key={i}>{word[i]}</div>;
+        {entry[i]=<div className="tile1 flipped" key={i}>{word[i]}</div>;
       marked[i]=true;
     lettercount[ans[i]]--;}
        else{
@@ -113,18 +119,18 @@ function Tiles({word,ans,enter}){
     for(let i=0;i<5;i++){
       if(!marked[i]){
        if(lettercount[word[i]]>0){
-        entry[i]=<div className="tile2" key={i}>{word[i]}</div>;
+        entry[i]=<div className="tile2 flipped" key={i}>{word[i]}</div>;
         lettercount[word[i]]--;
       }
       else{
-        entry[i]=<div className="tile3" key={i}>{word[i]}</div>;
+        entry[i]=<div className="tile3 flipped" key={i}>{word[i]}</div>;
       }
     }
   }
 }
   else{
     for(let i=0;i<5;i++){
-      entry[i]=<div className="tile3" key={i}>{word[i]}</div>;
+      entry[i]=<div className="tile3 flipped" key={i}>{word[i]}</div>;
     }
   }
   return (
