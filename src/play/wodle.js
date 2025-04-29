@@ -2,14 +2,13 @@ import { useState,useEffect, useRef, createRef } from "react";
 import words from 'an-array-of-english-words';
 import React from "react";
 import '../css/wordle.css';
-const oned=24*60*60*1000;
 export default function Wordle(){
     const val=words.filter((word) => word.length === 5);
    const [randomword]=useState(val[Math.floor(Math.random() * val.length)]);
    const [guess,setguess]=useState(Array(6).fill(''));
    const [curr,setcurr]=useState('');
    const [isenter,setisenter]=useState(Array(6).fill(false));
-
+   const [keystatus,setkeystatus]=useState({});
    useEffect(()=>{
      const handlekey=(e)=>{
       if(/^[a-z]$/.test(e.key))
@@ -64,12 +63,34 @@ export default function Wordle(){
               return newisenter;
             }
           )
+          setkeystatus(prev=>{
+            const newstatus={...prev};
+            const ans={};
+            for(let i=0;i<5;i++){
+              ans[randomword[i]]=(ans[randomword[i]]||0 )+ 1;
+            }
+            for(let i=0;i<5;i++){
+              if(curr[i]==randomword[i]){
+                newstatus[curr[i]]='correct';
+                ans[curr[i]]--;
+              }
+            }
+            for(let i=0;i<5;i++){
+              if(ans[curr[i]]>0 && newstatus[curr[i]]!=='correct'){
+                newstatus[curr[i]]='present';
+                ans[curr[i]]--;
+              }
+              else if(newstatus[curr[i]]!=='correct'){
+                newstatus[curr[i]]='absent';
+              }
+            }
+            return newstatus;
+          })
             if (guess[4]!=='') {
             alert('All guesses are used! The correct word was: ' + randomword);
             }
           setcurr('');
         }
-          
           else{
             alert('Not a valid word!');
           }
@@ -95,6 +116,7 @@ export default function Wordle(){
             )
         })
     }
+    <Keyboard letterStatus={keystatus}/>
     </div>
      ); 
 }
@@ -136,6 +158,30 @@ function Tiles({word,ans,enter}){
   return (
     <div className="entry">
         {entry}
+    </div>
+  );
+}
+  
+function Keyboard({letterStatus}) {
+  const rows = [
+    "QWERTYUIOP".split(""),
+    "ASDFGHJKL".split(""),
+    "ZXCVBNM".split(""),
+  ];
+  return (
+    <div className="keyboard">
+      {rows.map((row, i) => (
+        <div key={i} className="kb-row">
+          {row.map((key) => (
+            <div
+              key={key}
+              className={`kb-key ${letterStatus[key.toLowerCase()] || ""}`}
+            >
+              {key}
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

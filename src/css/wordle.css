@@ -23,3 +23,39 @@
    border: 1px solid black;
    background-color: rgba(97, 98, 94, 0.806);
 }
+.keyboard{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.kb-row{
+    display: flex;
+    flex-direction : row;
+    justify-content: center;
+    gap: 10px;
+}
+.kb-key{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height : 20px;
+    width:20px;
+    border-radius: 4px;
+    background-color: rgb(211, 214, 225);
+    font-size: medium;
+    font-weight: bold;
+    border:1px solid black;
+}
+.kb-key.correct{
+    background-color: rgba(40, 128, 9, 0.806);
+}
+.kb-key.present{
+  background-color: rgba(206, 227, 18, 0.806);
+
+}
+.kb-key.absent{
+   background-color: rgba(97, 98, 94, 0.806);
+}
