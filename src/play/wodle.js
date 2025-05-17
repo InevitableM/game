@@ -9,6 +9,14 @@ export default function Wordle(){
    const [curr,setcurr]=useState('');
    const [isenter,setisenter]=useState(Array(6).fill(false));
    const [keystatus,setkeystatus]=useState({});
+   if(now.getHours()===0 && now.getMinutes()===0){
+    localStorage.removeItem('wordle');
+    localStorage.setItem('wordle','false');
+   }
+   if(localStorage.getItem('wordle')==='true'){
+    alert('You have already played the game!');
+    return;
+   }
    useEffect(()=>{
      const handlekey=(e)=>{
       if(/^[a-z]$/.test(e.key))
@@ -88,6 +96,7 @@ export default function Wordle(){
           })
             if (guess[4]!=='') {
             alert('All guesses are used! The correct word was: ' + randomword);
+            localStorage.setItem('wordle','true');
             }
           setcurr('');
         }
