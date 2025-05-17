@@ -9,14 +9,18 @@ export default function Wordle(){
    const [curr,setcurr]=useState('');
    const [isenter,setisenter]=useState(Array(6).fill(false));
    const [keystatus,setkeystatus]=useState({});
+   const [isgameover,setisgameover]=useState(false);
+   useEffect(()=>{const now=new Date();
    if(now.getHours()===0 && now.getMinutes()===0){
     localStorage.removeItem('wordle');
     localStorage.setItem('wordle','false');
+    setisgameover(false);
    }
    if(localStorage.getItem('wordle')==='true'){
-    alert('You have already played the game!');
-    return;
+   setisgameover(true);
    }
+  }
+  ,[]);
    useEffect(()=>{
      const handlekey=(e)=>{
       if(/^[a-z]$/.test(e.key))
@@ -113,9 +117,13 @@ export default function Wordle(){
    },[curr]);
 
  return (
-    <div>
+      <div>
       <h1>Wordle</h1> 
-    {guess.map((guesss,i)=>{
+  { isgameover ? 
+   (<div><p>Game is Over, reset at 12:00</p></div>):(
+    <>
+    {
+      guess.map((guesss,i)=>{
       const iscurr=i===guess.findIndex((g)=>g==='')?true:false;
       const status=isenter[i];
      return (
@@ -126,7 +134,10 @@ export default function Wordle(){
         })
     }
     <Keyboard letterStatus={keystatus}/>
+    </>
+   )}
     </div>
+
      ); 
 }
 
