@@ -1,5 +1,4 @@
-import React, { use } from 'react';
-import ReactDOM from 'react-dom/client';
+
 import '../css/sudoku.css';
 import {useState, useEffect} from 'react';
 
@@ -24,6 +23,7 @@ useEffect(()=>{
     setsudoku(newg);
     setans(ansval(newg));
 },[difficulty]);
+
 function fill(grid){
     const empt=empty(grid);
     if(!empt){return true;}

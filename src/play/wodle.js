@@ -1,6 +1,5 @@
-import { useState,useEffect, useRef, createRef } from "react";
+import { useState,useEffect } from "react";
 import words from 'an-array-of-english-words';
-import React from "react";
 import '../css/wordle.css';
 export default function Wordle(){
     const val=words.filter((word) => word.length === 5);
@@ -11,15 +10,18 @@ export default function Wordle(){
    const [keystatus,setkeystatus]=useState({});
    const [isgameover,setisgameover]=useState(false);
    useEffect(()=>{const now=new Date();
-   if(now.getHours()===0 && now.getMinutes()===0){
+    const time=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
+    const ss=localStorage.getItem('wordle')
+    const storetime=new Date(ss);
+   if((time.getFullYear()-storetime.getFullYear())>=1 || (time.getMonth()-storetime.getMonth())>=1 || (time.getDate()-storetime.getDate())>=1){
     localStorage.removeItem('wordle');
-    localStorage.setItem('wordle','false');
     setisgameover(false);
    }
-   if(localStorage.getItem('wordle')==='true'){
+   else{
    setisgameover(true);
    }
   }
+
   ,[]);
    useEffect(()=>{
      const handlekey=(e)=>{
@@ -61,6 +63,9 @@ export default function Wordle(){
               }
               )
             setcurr('');
+             const time=new Date();
+            const now=new Date(time.getFullYear(),time.getMonth(),time.getDate(),0,0,0);
+            localStorage.setItem('wordle',now);
           }
           else if(temp){
             setguess(prev=>{
@@ -82,7 +87,7 @@ export default function Wordle(){
               ans[randomword[i]]=(ans[randomword[i]]||0 )+ 1;
             }
             for(let i=0;i<5;i++){
-              if(curr[i]==randomword[i]){
+              if(curr[i]===randomword[i]){
                 newstatus[curr[i]]='correct';
                 ans[curr[i]]--;
               }
@@ -100,7 +105,9 @@ export default function Wordle(){
           })
             if (guess[4]!=='') {
             alert('All guesses are used! The correct word was: ' + randomword);
-            localStorage.setItem('wordle','true');
+            const time=new Date();
+            const now=new Date(time.getFullYear(),time.getMonth(),time.getDate(),0,0,0);
+            localStorage.setItem('wordle',now);
             }
           setcurr('');
         }
