@@ -15,7 +15,7 @@ export default function Wordle(){
     console.log('tt',ss);
     console.log('time',time);
     if(!ss){
-      setisgameover(false);
+      setisgameover(true);
     }
     else{const storetime=new Date(ss);
     console.log(storetime.getDate());
