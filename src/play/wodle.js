@@ -13,7 +13,8 @@ export default function Wordle(){
     const time=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
     const ss=localStorage.getItem('wordle')
     const storetime=new Date(ss);
-   if((time.getFullYear()-storetime.getFullYear())>=1 || (time.getMonth()-storetime.getMonth())>=1 || (time.getDate()-storetime.getDate())>=1){
+    console.log(storetime);
+   if((time.getFullYear()-storetime.getFullYear())>=1 || (time.getMonth()-storetime.getMonth())>=1 || (time.getDay()-storetime.getDay())>=1){
     localStorage.removeItem('wordle');
     setisgameover(false);
    }
