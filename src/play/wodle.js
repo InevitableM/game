@@ -16,9 +16,8 @@ export default function Wordle(){
     console.log('time',time);
     if(!ss){
       setisgameover(false);
-      return;
     }
-    const storetime=new Date(ss);
+    else{const storetime=new Date(ss);
     console.log(storetime.getDate());
    if((time.getFullYear()-storetime.getFullYear())>=1 || (time.getMonth()-storetime.getMonth())>=1 || (time.getDate()-storetime.getDate())>=1){
     localStorage.removeItem('wordle');
@@ -27,6 +26,7 @@ export default function Wordle(){
    else{
    setisgameover(true);
    }
+  }
   }
 
   ,[]);
