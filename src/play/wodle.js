@@ -12,7 +12,8 @@ export default function Wordle(){
    useEffect(()=>{const now=new Date();
     const time=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
     const ss=localStorage.getItem('wordle')
-    console.log(ss);
+    console.log('tt',ss);
+    consolelog('time',time);
     if(!ss){
       setisgameover(false);
       return;
