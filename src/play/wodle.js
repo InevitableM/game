@@ -12,9 +12,14 @@ export default function Wordle(){
    useEffect(()=>{const now=new Date();
     const time=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
     const ss=localStorage.getItem('wordle')
+    console.log(ss);
+    if(!ss){
+      setisgameover(false);
+      return;
+    }
     const storetime=new Date(ss);
-    console.log(storetime);
-   if((time.getFullYear()-storetime.getFullYear())>=1 || (time.getMonth()-storetime.getMonth())>=1 || (time.getDay()-storetime.getDay())>=1){
+    console.log(storetime.getDate());
+   if((time.getFullYear()-storetime.getFullYear())>=1 || (time.getMonth()-storetime.getMonth())>=1 || (time.getDate()-storetime.getDate())>=1){
     localStorage.removeItem('wordle');
     setisgameover(false);
    }
