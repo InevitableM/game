@@ -27,6 +27,7 @@ export default function Wordle(){
    setisgameover(true);
    }
   }
+  console.log('isgameover',isgameover);
   }
 
   ,[]);
