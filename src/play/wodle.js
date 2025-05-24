@@ -13,7 +13,7 @@ export default function Wordle(){
     const time=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
     const ss=localStorage.getItem('wordle')
     console.log('tt',ss);
-    consolelog('time',time);
+    console.log('time',time);
     if(!ss){
       setisgameover(false);
       return;
