@@ -1,0 +1,95 @@
+# ============================================
+# KUBERNETES DEPLOYMENT
+# ============================================
+# A Deployment manages a set of identical Pods
+# It ensures desired number of replicas are running
+# and handles rolling updates
+
+apiVersion: apps/v1          # API version for Deployment resource
+kind: Deployment             # Type of Kubernetes resource
+metadata:
+  name: game-app             # Name of this deployment
+  labels:
+    app: game-app            # Labels for organizing resources
+
+spec:
+  # ------------------------------------------
+  # REPLICA COUNT
+  # ------------------------------------------
+  # How many copies of your app to run
+  # More replicas = more availability & load handling
+  replicas: 3
+
+  # ------------------------------------------
+  # SELECTOR
+  # ------------------------------------------
+  # How the Deployment finds which Pods to manage
+  # Must match the labels in template.metadata.labels
+  selector:
+    matchLabels:
+      app: game-app
+
+  # ------------------------------------------
+  # POD TEMPLATE
+  # ------------------------------------------
+  # Blueprint for creating Pods
+  template:
+    metadata:
+      labels:
+        app: game-app        # Pods get this label (must match selector)
+
+    spec:
+      containers:
+      - name: game-app
+        # Image to run (will be replaced by CI/CD)
+        # Format: registry/repository:tag
+        image: ghcr.io/YOUR_GITHUB_USERNAME/game-app:latest
+
+        # Port the container listens on
+        ports:
+        - containerPort: 80
+
+        # ------------------------------------------
+        # RESOURCE LIMITS
+        # ------------------------------------------
+        # Prevent a single pod from consuming all resources
+        resources:
+          requests:          # Minimum guaranteed resources
+            memory: "64Mi"
+            cpu: "100m"      # 100 millicores = 0.1 CPU
+          limits:            # Maximum allowed resources
+            memory: "128Mi"
+            cpu: "200m"
+
+        # ------------------------------------------
+        # HEALTH CHECKS
+        # ------------------------------------------
+        # Kubernetes uses these to know if your app is healthy
+
+        # Liveness Probe: Is the app alive?
+        # If this fails, K8s restarts the container
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10    # Wait before first check
+          periodSeconds: 10          # Check every 10 seconds
+
+        # Readiness Probe: Is the app ready to receive traffic?
+        # If this fails, K8s removes pod from Service endpoints
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+  # ------------------------------------------
+  # UPDATE STRATEGY
+  # ------------------------------------------
+  # How to handle rolling updates
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1           # Max pods over desired count during update
+      maxUnavailable: 0     # Ensure zero downtime

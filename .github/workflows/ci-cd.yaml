@@ -1,0 +1,161 @@
+# ============================================
+# GITHUB ACTIONS CI/CD WORKFLOW
+# ============================================
+# This workflow automatically:
+# 1. Runs tests on every push/PR
+# 2. Builds Docker image
+# 3. Pushes to GitHub Container Registry
+# 4. (Optional) Deploys to Kubernetes
+
+name: CI/CD Pipeline
+
+# ------------------------------------------
+# TRIGGERS
+# ------------------------------------------
+# When should this workflow run?
+on:
+  # Run on push to main branch
+  push:
+    branches: [main, master]
+
+  # Run on pull requests to main
+  pull_request:
+    branches: [main, master]
+
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+
+# ------------------------------------------
+# ENVIRONMENT VARIABLES
+# ------------------------------------------
+env:
+  REGISTRY: ghcr.io                              # GitHub Container Registry
+  IMAGE_NAME: ${{ github.repository }}           # e.g., "username/game"
+
+# ------------------------------------------
+# JOBS
+# ------------------------------------------
+jobs:
+  # ==========================================
+  # JOB 1: TEST
+  # ==========================================
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'               # Cache npm dependencies
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci                  # ci = clean install (faster, stricter)
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test -- --passWithNoTests --watchAll=false
+
+      # Step 5: Build to verify no errors
+      - name: Build
+        run: npm run build
+
+  # ==========================================
+  # JOB 2: BUILD AND PUSH DOCKER IMAGE
+  # ==========================================
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test                      # Only run if tests pass
+
+    # Only build on push to main (not on PRs)
+    if: github.event_name == 'push'
+
+    # Permissions needed for GitHub Container Registry
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      # Step 1: Check out code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Docker Buildx (for better builds)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 3: Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}              # Your GitHub username
+          password: ${{ secrets.GITHUB_TOKEN }}      # Auto-provided by GitHub
+
+      # Step 4: Extract metadata for Docker
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=                         # Git commit SHA
+            type=ref,event=branch                    # Branch name
+            type=raw,value=latest                    # Always tag as latest
+
+      # Step 5: Build and push Docker image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha                       # Use GitHub Actions cache
+          cache-to: type=gha,mode=max
+
+  # ==========================================
+  # JOB 3: DEPLOY TO KUBERNETES (Optional)
+  # ==========================================
+  # Uncomment this section when you have a K8s cluster
+
+  # deploy:
+  #   name: Deploy to Kubernetes
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-push
+  #   if: github.ref == 'refs/heads/main'
+  #
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     # Configure kubectl with your cluster credentials
+  #     # Store KUBE_CONFIG as a GitHub secret
+  #     - name: Configure kubectl
+  #       uses: azure/setup-kubectl@v3
+  #
+  #     - name: Set Kubernetes context
+  #       uses: azure/k8s-set-context@v3
+  #       with:
+  #         kubeconfig: ${{ secrets.KUBE_CONFIG }}
+  #
+  #     # Update image tag in deployment
+  #     - name: Deploy to Kubernetes
+  #       run: |
+  #         kubectl set image deployment/game-app \
+  #           game-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+  #
+  #     # Verify deployment
+  #     - name: Verify deployment
+  #       run: kubectl rollout status deployment/game-app

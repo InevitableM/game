@@ -1,0 +1,75 @@
+# ============================================
+# KUBERNETES SERVICE
+# ============================================
+# A Service provides a stable network endpoint
+# to access a group of Pods
+#
+# WHY NEEDED?
+# - Pods are ephemeral (can die and restart)
+# - Pod IPs change when they restart
+# - Service provides a stable IP/DNS name
+# - Service load balances traffic across Pods
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: game-app-service
+  labels:
+    app: game-app
+
+spec:
+  # ------------------------------------------
+  # SERVICE TYPE
+  # ------------------------------------------
+  # ClusterIP   - Internal only (default)
+  # NodePort    - Expose on each node's IP
+  # LoadBalancer - Provision cloud load balancer (AWS/GCP/Azure)
+
+  type: LoadBalancer
+
+  # ------------------------------------------
+  # SELECTOR
+  # ------------------------------------------
+  # Which Pods to send traffic to
+  # Matches Pods with label "app: game-app"
+  selector:
+    app: game-app
+
+  # ------------------------------------------
+  # PORTS
+  # ------------------------------------------
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80            # Port exposed by the Service
+      targetPort: 80      # Port on the container
+
+---
+# ============================================
+# HORIZONTAL POD AUTOSCALER (Optional)
+# ============================================
+# Automatically scales pods based on CPU/memory usage
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: game-app-hpa
+
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: game-app
+
+  # Min and max replicas
+  minReplicas: 2
+  maxReplicas: 10
+
+  # Scale based on CPU usage
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70    # Scale up if CPU > 70%
