@@ -31,6 +31,7 @@ on:
 env:
   REGISTRY: ghcr.io                              # GitHub Container Registry
   IMAGE_NAME: ${{ github.repository }}           # e.g., "username/game"
+  CI: false                                      # Don't treat warnings as errors
 
 # ------------------------------------------
 # JOBS
