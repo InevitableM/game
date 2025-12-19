@@ -8,6 +8,7 @@ import './css/App.css';
 
 function Header(){
   const location=useLocation();
+  var z=0;
   const isGameRoute = ['/'].includes(location.pathname);
   return isGameRoute ? <h1>Ek Aur Gamer</h1>:null;
 }
